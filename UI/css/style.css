@@ -25,6 +25,7 @@ body {
 
 .header {
   margin: 0;
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -104,18 +105,13 @@ body {
   background-color: grey;
 }
 
-.chat-hero__icon {
-}
-.chat-hero__name {
-}
-
 .chat {
   display: inline-block;
   width: 790px;
 }
 .chat__search {
   display: flex;
-  height: 32px;
+  height: 48px;
   border-bottom: 2px solid #d0d0d0;
 }
 
@@ -126,12 +122,17 @@ body {
   border-right: 2px solid #d0d0d0;
 }
 
+.search:last-child{
+    border-right: none ;
+}
+
 .search__by-text {
-  width: 40%;
+  width: 45%;
 }
 .search__by-autor {
-  width: 35%;
+  width: 44.1%;
 }
+
 
 input {
   border: none;
@@ -159,11 +160,16 @@ input {
 .message {
   display: flex;
   align-items: center;
+  margin-bottom: 8px;
 }
 
 .my-message {
   margin-left: auto;
   margin-right: 0;
+}
+
+.my-message img {
+    margin-right: 8px;
 }
 
 .message__pesonal {
