@@ -1,0 +1,51 @@
+
+.hero__icon {
+    height: 50px;
+    width: 50px;
+    margin-right: 20px;
+    border-radius: 1000px;
+}
+
+.hero__letter {
+    display: block;
+    font-size: 2rem;
+    color: #fff;
+    margin-top: calc(50% - 1.2rem);
+    margin-left: calc(50% - .7rem);
+}
+
+.hide {
+    visibility: hidden;
+}
+
+.delete {
+    display: none;
+}
+
+.red {
+    background-color: red;
+}
+
+.blue {
+    background-color: #0092d6;
+}
+
+.pink {
+    background-color: #d600b5;
+}
+
+.yellow {
+    background-color: #d6b500;
+}
+
+.violet {
+    background-color: #8d00d6;
+}
+
+.turquoise {
+    background-color: #00d6a1;
+}
+
+.orange {
+    background-color: #d66f00;
+}
