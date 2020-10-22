@@ -122,8 +122,8 @@ body {
   border-right: 2px solid #d0d0d0;
 }
 
-.search:last-child{
-    border-right: none ;
+.search:last-child {
+  border-right: none;
 }
 
 .search__by-text {
@@ -132,7 +132,6 @@ body {
 .search__by-autor {
   width: 44.1%;
 }
-
 
 input {
   border: none;
@@ -169,7 +168,7 @@ input {
 }
 
 .my-message img {
-    margin-right: 8px;
+  margin-right: 8px;
 }
 
 .message__pesonal {
@@ -223,7 +222,7 @@ input {
 }
 
 .send__create {
-    width: 90%;
+  width: 90%;
 }
 
 .send__create-input {
