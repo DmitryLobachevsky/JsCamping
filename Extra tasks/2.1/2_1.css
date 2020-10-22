@@ -1,0 +1,62 @@
+
+.button {
+    padding: 20px 40px;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 5px;
+    color: #fff;
+    background-color: #0d0d61;
+}
+
+
+#zatemnenie {
+  background: rgba(0, 0, 0, 0.65);
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+}
+#okno {
+  width: 40%;
+  height: 45%;
+  padding: 35px;
+  border-radius: 10px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  background: #fff;
+}
+
+.message {
+    margin: 0;
+    font-size: 32px;
+}
+
+#zatemnenie:target {
+  display: block;
+}
+
+.wrapper {
+    text-align: right;
+}
+
+.close {
+  display: inline-block;
+  border: none;
+  border-radius: 3px;
+  color: #fff;
+  background-color: #0d0d61;
+  padding: 5px 15px;
+  margin-top: 190px;
+  text-decoration: none;
+  font-size: 14pt;
+  cursor: pointer;
+}
+.close:hover {
+  background: #141496;
+}
