@@ -19,7 +19,11 @@ body {
 
 .wrapper {
   width: 1140px;
-  height: 900px;
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   margin: 0 auto;
   -webkit-box-shadow: 0px 1px 19px -1px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 0px 1px 19px -1px rgba(0, 0, 0, 0.75);
@@ -32,7 +36,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 90px;
+  min-height: 90px;
   background-color: #8bd600;
 }
 
@@ -62,24 +66,23 @@ body {
 }
 
 .main {
-  height: 720px;
-  margin-top: -5px;
-  display: grid;
-  grid-template-columns: 03fr 07fr;
-  grid-template-rows: 1fr;
-  gap: 0px 0px;
-  grid-template-areas: ". .";
+  flex-basis: 100%;
+  max-height: calc(100% - 180px);
+  display: flex;
   background-color: #fff;
 }
 
 .chat-heroes {
-  display: inline-block;
-  width: 350px;
-  height: 100%;
+  flex-basis: 30%;
+  display: flex;
+  flex-direction: column;
   color: #8f8f8f;
   border-right: 2px solid #d0d0d0;
+  overflow-y: auto;
 }
 .chat-hero {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
   padding-left: 20px;
   display: flex;
   align-items: center;
@@ -88,7 +91,9 @@ body {
 }
 
 .chat-hero:hover {
+  cursor: pointer;
   background-color: #d0d0d0;
+  
 }
 
 .status {
@@ -109,8 +114,11 @@ body {
 }
 
 .chat {
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   width: 790px;
+  height: 100%;
 }
 .chat__search {
   display: flex;
@@ -142,13 +150,15 @@ input {
   outline: none;
   font-size: 16px;
   padding: 5px 10px;
-  /* margin-left: 10%; */
   color: #8f8f8f;
 }
 
 .messages {
   display: flex;
   flex-direction: column;
+  
+  height: calc(100% - 92px);
+  overflow-y: auto;
 }
 .messages__date {
   padding: 0.5rem 2rem;
@@ -183,9 +193,6 @@ input {
   background-color: #d0d0d0;
 }
 
-.chat-hero:hover {
-  background-color: #fff;
-}
 .message__description {
   display: flex;
   max-width: 320px;
