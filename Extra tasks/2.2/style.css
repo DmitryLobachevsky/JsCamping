@@ -1,0 +1,242 @@
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+}
+
+.wrapper {
+    height: 100%;
+    width: 1000px;
+    margin: 0 auto;
+}
+
+.ticket {
+    width: 100%;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    border: 2px solid rgb(148, 143, 143);
+    border-radius: 5px;
+}
+
+
+.ticket__description {
+    display: flex;
+    
+}
+
+
+.ticket__img {
+    display: flex;
+    align-items: flex-start;
+    width: 200px;
+    height: 200px;
+    margin: 15px;
+    border-radius: 5px;
+    
+}
+
+.img-1 {
+    background-image: url(https://cf.bstatic.com/xdata/images/hotel/square200/246568908.webp?k=db3112e06490b0b257231ecbbf15ec6eda43452231e15f2e871b22261fb2276d&o=);
+}
+
+.img-2 {
+    background-image: url(https://cf.bstatic.com/xdata/images/hotel/square200/20332413.webp?k=a44f6763ea8fb72e1ec41be6054963ac50887f340b5bec1b423de63213018b52&o=);
+}
+
+.breackfast {
+    display: inline-block;
+    width: 130px;
+    padding: 5px 10px;
+    margin: 0;
+    margin-top: 10px;
+    margin-left: -10px;
+    border-radius: 5px 5px 5px 0;
+    color: #FFF;
+    background-color: rgb(5, 172, 5);
+    font-size: 14px;
+    z-index: 999;
+}
+
+.traingle {
+    width: 0; 
+    height: 0;
+    margin-left: -10px;
+    border-top: 10px solid rgb(5, 172, 5);
+    border-left: 10px solid transparent;
+    }
+
+
+.ticket__info {
+    margin-top: 15px;
+}
+
+.ticket__info h1 {
+    margin: 0;
+    color: #0071c2;
+}
+
+.ticket__name:hover {
+    color: rgb(212, 158, 136);
+}
+
+.ticket__star {
+    display: flex;
+    height: 25px;
+    align-items: center;
+}
+
+.good {
+    margin-top: -2px;
+    margin-left: 4px;
+    padding: 3px;
+}
+.genius {
+    padding: 3px;
+    margin-left: 4px;
+    color: white;
+    background-color: blue;
+    border-radius: 3px;
+}
+
+.ticket__recommended {
+    margin-top: 25px;
+    margin-left: 10px;
+}
+
+.recommend__list {
+    display: flex;
+}
+
+.recommend__list ul {
+    list-style-type: none;
+    padding-left: 10px;
+}
+
+li {
+    margin-top: 5px;
+    font-size: 14px;
+}
+
+li:first-child {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+
+.four-man {
+    display: flex;
+    margin: 0;
+    
+}
+.man {
+    width: 15px;
+    height: 15px;
+    margin-right: 2px;
+    margin-top: 20px;
+    background-color: #000;
+    border-radius: 1000px;
+}
+
+
+
+
+.ticket__rating {
+    margin-top: 15px;
+    margin-left: auto;
+    margin-right: 20px;
+    display: flex;
+    cursor: pointer;
+}
+.rating__description {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;    
+}
+.rating__title {
+    margin: 0;
+    color: rgb(14, 14, 131);
+}
+.rating__reviews {
+    color: rgb(173, 166, 166);
+}
+.raiting__value {
+    margin-left: 10px;
+    padding: 15px;
+    height: 25px;
+    border-radius: 15px 15px 15px 0;
+    color: #FFF;
+    background-color: rgb(14, 14, 131);
+    font-size: 20px;
+    
+}
+
+
+.ticket__booking {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-right: 20px;
+    margin-left: auto;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: rgb(146, 144, 144);
+}
+
+.ticket__cost {
+    margin-top: 5px;
+    margin-bottom: 2px;
+}
+
+.ticket__cost span {
+    font-size: 22px;
+    color: rgb(78, 78, 78);
+}
+
+
+.ticket__see {
+    margin-top: 20px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 2px;
+    color: #FFF;
+    background-color:#0071c2;
+    font-size: 16px;
+}
+
+.ticket__see:hover {
+    cursor: pointer;
+    background-color: #074c7e;
+}
+
+
+
+.ticket__info-wrapper {
+    width: 380px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.villas {
+    padding: 5px;
+    border-radius: 3px;
+    color: #FFF;
+    background-color: green;
+}
+
+
+
+.green {
+    color: rgb(5, 172, 5);
+}
+
+.blue {
+    color: rgb(89, 174, 202);
+}
+
+.red {
+    color: red;
+}

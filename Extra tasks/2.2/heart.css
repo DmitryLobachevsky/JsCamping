@@ -1,0 +1,45 @@
+
+.heart__wrapper {
+    width: 30px;
+    margin-left: auto;
+    margin-right: 5px;
+    margin-top: 10px;
+    opacity: 0.8;
+}
+
+.heart__wrapper:hover {
+    cursor: pointer;
+    opacity: 1;
+}
+
+/* Базовые стили */
+.heart {
+    position: relative;
+    width: 15px;
+    height: 25px;
+    background-color:  rgb(199, 39, 39);
+    box-shadow: -1px 0px 2px #444;  
+    -webkit-border-radius: 50px 50px 0 0;
+    -moz-border-radius: 50px 50px 0 0;
+    border-radius: 50px 50px 0 0;
+  /* Определяем угол наклона */
+    -webkit-transform: rotate(315deg);
+    -moz-transform: rotate(315deg);
+    -ms-transform: rotate(315deg);
+    -o-transform: rotate(315deg);
+    transform: rotate(315deg);
+  }
+  /* Формируем правую часть */
+  .heart:before {
+    position: absolute;
+    width: 25px;
+    height: 15px;
+    left: 0;
+    bottom: 0;
+    content: "";
+    background-color: rgb(199, 39, 39);
+    box-shadow: 0px 3px 3px #444444; 
+    -webkit-border-radius: 50px 50px 0 0;
+    -moz-border-radius: 50px 50px 0 0;
+    border-radius: 0 50px 50px 0;
+  }
