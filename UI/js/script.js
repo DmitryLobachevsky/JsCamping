@@ -211,7 +211,7 @@
             console.log('id не валидно')
             return false;
         }
-        if(typeof(message.id) !== 'string' || message.text === undefined){
+        if(typeof(message.text) !== 'string' || message.text === undefined || message.text.length > 200){
             console.log('text не валидно')
             return false;
         }
@@ -240,23 +240,33 @@
     }
 
     function removeMessage(id){
+        let flag =  false;
         for(let i = 0; i < messages.length; i++){
             if(messages[i].id === id){
                 messages.splice(i,1);
+                flag = true;
             }
         }
-        return messages;
+        if(flag)
+            return messages;
+        return ''
     }
 
     function editMessage(id, message){
-        if(message.text !== undefined){
-            messages.forEach(item => {
-                if(item.id === id){
-                    item.text = message.text;
-                }
-            })
-            return true;
+        if(message.text.length > 200){
+            console.log('размер сообщения превышает допустимое значение');
+            return false;
         }
+        let flag = false;
+        messages.forEach(item => {
+            if(item.id === id){
+                item.text = message.text;
+                flag = true;
+            }
+        })
+        if(flag)
+            return true;
+        console.log('Сообщения с таким id не существует')
         return false;
     }
 
@@ -319,6 +329,66 @@ console.log(chat.validate(chat.getM('1')));
 console.log('Проверим невалидное сообщение');
 console.log(chat.getM('20'));
 console.log(chat.validate(chat.getM('20')));
+
+
+
+
+console.log('Тестировка addMessage')
+
+
+let  m1 = {
+    id: '550',
+    text: 'Проверка на добавление сообщения',
+    createdAt: new Date('2021-11-01T16:10:00'),
+    author: 'Nikola',
+    isPersonal: false
+}
+
+let  m2 = {
+    id: '550',
+    text: 'Проверка на добавление сообщения',
+    createdAt: new Date('2021-11-01T16:10:00'),
+    isPersonal: false
+}
+
+let  m3 = {
+    id: 550,
+    text: 'Проверка на добавление сообщения',
+    createdAt: new Date('2021-11-01T16:10:00'),
+    author: 'Nikola',
+    isPersonal: false
+}
+
+console.log(m1);
+console.log(chat.add(m1));
+console.log(chat.getAll());
+console.log('///////////////////////////////////////////////////////////////////////////////')
+
+console.log(m2);
+console.log(chat.add(m2));
+console.log(chat.getAll());
+console.log('///////////////////////////////////////////////////////////////////////////////')
+
+console.log(m3);
+console.log(chat.add(m3));
+console.log(chat.getAll());
+console.log('///////////////////////////////////////////////////////////////////////////////')
+
+
+
+
+console.log('Тестировка revoveMessage()')
+
+console.log(chat.getAll());
+console.log(chat.getM('4'));
+console.log(chat.remove('4'));
+
+
+
+
+console.log('Тестировка editMessage()')
+
+console.log('Незабыть придумать тесты');
 
 
 
