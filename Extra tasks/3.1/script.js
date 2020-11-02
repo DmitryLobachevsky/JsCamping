@@ -8,8 +8,9 @@ function maxSum(arr) {
     for (let item of arr) { 
       temp += item;
       a_temp.push(item);
-      if(temp > maxSum) //Я не понимаю, почему не проходит эта проверка, можете написать причину в коментарии к пулриквесту?
-      a_max = a_temp;
+      if(temp > maxSum){
+        a_max = a_temp.slice(0,a_temp.length);
+      } 
       maxSum = Math.max(maxSum, temp);
       if (temp < 0) {
         temp = 0;
