@@ -1,6 +1,21 @@
-  const chat =  (function(){
-    let count = 21;
-    let mes_id = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
+"use strict"
+const chat =  (function(){    
+    let currentAuthor = 'Dmitry Lobachevsky';
+
+    const filterObject = {
+        author: (item, author) => author && item.author.toLowerCase().includes(author),
+        text: (item, text) => text && item.text.toLowerCase().includes(text),
+        dateTo: (item, dateTo) => dateTo && item.createdAt < dateTo,
+        dateFrom: (item, dateFrom) => dateFrom && item.createdAt < dateFrom
+    };
+
+    const validateObject = {
+        id: (item) => item.id && typeof item.id === "string",
+        text: (item) => item.text && item.text.length <= 200,
+        author: (item) => item.author && typeof item.author === "string",
+        createdAt: (item) => item.createdAt && item.createdAt.__proto__ === Date.prototype
+    };
+
     const messages = [
         {
             id: '1',
@@ -158,81 +173,31 @@
     }
 
 
-    function getMessages(start, quantity, obj){
-        if(start < 0 || quantity < 0 || (obj !== undefined && (obj === {} || obj.author === ''))){
-            return 'Вы ввели не корректные значения!'
-        }
-        if(obj !== undefined){
-            let a = messages.filter(item => item.author.indexOf(obj.author) + 1);
-            let size;
-            if(quantity > a.length){
-                size = a.length;
-            }else{
-                size = quantity;
-            }
-            let temp = [];
-            temp = sort(a); 
-            let arr = [];
-            for(let i = start; i < size; i++){
-                arr.push(temp[i]);
-            }
-            return arr;
-            
+    function getMessages(start = 0 , quantity = 10, filterConfig = {}){
+        let result = messages.slice();
+        
+        Object.keys(filterConfig).forEach(key => {
+            result = result.filter(item => filterObject[key](item, filterConfig[key]));
+        })
 
-        } else {
-            let temp = [];
-            temp = sort(messages);  
-            let arr = [];
-            for(let i = start; i < (start + quantity); i++){
-                arr.push(temp[i]);
-            }
-             return arr;
-        }
+        return result.sort().slice(start, quantity);
     }
 
     function getMessage(id){
-        let flag = false;
-        let temp;
-        for(let i = 0; i < messages.length; i++){
-            if(messages[i].id === id){
-                temp = messages[i];
-                flag = true;
-            }
-        }
-        if(flag){
-            return temp;
-        } else {
-            return 'Сообщения с таким id нет';
-        } 
+        return messages.find(item => item.id === id);
     }
 
     function validateMessage(message){
-        if(typeof(message.id) !== 'string' || message.id === undefined){
-            console.log('id не валидно')
-            return false;
-        }
-        if(typeof(message.text) !== 'string' || message.text === undefined || message.text.length > 200){
-            console.log('text не валидно')
-            return false;
-        }
-        if(typeof(message.createdAt) !== 'object' || message.createdAt === undefined){
-            console.log('date не валидно')
-            return false;
-        }
-        if(typeof(message.author) !== 'string' || message.author === undefined){
-            console.log('author не валидно')
-            return false;
-        }
-        return true;
+        return Object.keys(validateObject).every(key => validateObject[key](message));
     }
 
     function addMessage(message){
+        message.id = `${+new Date()}`;
+        message.createdAt = new Date();
+        message.author = currentAuthor;
+
+            
         if(validateMessage(message)){
-            for(let i = 0; i < mes_id.length; i++){
-                if(mes_id[i] === +message.id)
-                    return false;
-            }
-            mes_id.push(message.id);
             messages.push(message);
             return true;
         }
@@ -240,34 +205,31 @@
     }
 
     function removeMessage(id){
-        let flag =  false;
-        for(let i = 0; i < messages.length; i++){
-            if(messages[i].id === id){
-                messages.splice(i,1);
-                flag = true;
-            }
-        }
-        if(flag)
-            return messages;
-        return ''
+        let index = messages.findIndex(item => item.id === id);
+        messages.splice(index, 1);
+        return true;
     }
 
-    function editMessage(id, message){
-        if(message.text.length > 200){
-            console.log('размер сообщения превышает допустимое значение');
-            return false;
+    function editMessage(id, msg){
+        let tempMsg = messages.find(item => item.id === id);
+        if(msg.text !== undefined){
+            tempMsg.text = msg.text;
         }
-        let flag = false;
-        messages.forEach(item => {
-            if(item.id === id){
-                item.text = message.text;
-                flag = true;
-            }
-        })
-        if(flag)
+        if(msg.isPersonal !== tempMsg.isPersonal && msg.isPersonal === true){
+            tempMsg.isPersonal = msg.isPersonal;
+            tempMsg.to = msg.to;
+            console.log('Udalos');
+        } else 
+        if(msg.isPersonal !== tempMsg.isPersonal && msg.isPersonal === false){
+            tempMsg.isPersonal = msg.isPersonal;
+            delete tempMsg.to; 
+        }
+        
+        if(validateMessage(tempMsg)){
             return true;
-        console.log('Сообщения с таким id не существует')
+        }
         return false;
+
     }
 
 
@@ -277,8 +239,8 @@
 
 
     return {
-        getMs:getMessages,
-        getM: getMessage,
+        getMessages:getMessages,
+        getMessage: getMessage,
         validate:validateMessage,
         add:addMessage,
         edit:editMessage,
@@ -292,18 +254,15 @@ console.log('Тестировка getMessages()\n \n  ');
 
 
 console.log('Выведем первые 10 сообщений\n');
-console.log(chat.getMs(0,10));
+console.log(chat.getMessages(0,10));
 
 console.log('Выведем 10 сообщений начиная с 11-го\n');
-console.log(chat.getMs(10,10));
+console.log(chat.getMessages(10,20));
 
 console.log('Выведем первые 10 старосты\n');
-console.log(chat.getMs(0,10, {author: 'староста'}));
-console.log('Вывелось 5, т к в чате пока только 5 сообщений от старосты');
+console.log(chat.getMessages(0,20, {author: "староста"}));
 
-console.log('При подставлении некорректных данный будет выведено сообщение с ошибкой\n');
-console.log(chat.getMs(0,-10));
-
+console.log(chat.getMessages(0,20, {author: "староста"}));
 
 
 
@@ -311,11 +270,7 @@ console.log('тестировка getMessage()\n ');
 
 
 console.log('Получение сообщения с id = 2');
-console.log(chat.getM('2'));
-
-console.log('Получение сообщения с id = 10000');
-console.log(chat.getM('10000'));
-
+console.log(chat.getMessage('2'));
 
 
 
@@ -323,12 +278,12 @@ console.log('Тестировка validateMessage');
 
 
 console.log('Проверим валидное сообщение');
-console.log(chat.getM('1'));
-console.log(chat.validate(chat.getM('1')));
+console.log(chat.getMessage('1'));
+console.log(chat.validate(chat.getMessage('1')));
 
 console.log('Проверим невалидное сообщение');
-console.log(chat.getM('20'));
-console.log(chat.validate(chat.getM('20')));
+console.log(chat.getMessage('20'));
+console.log(chat.validate(chat.getMessage('20')));
 
 
 
@@ -337,60 +292,61 @@ console.log('Тестировка addMessage')
 
 
 let  m1 = {
-    id: '550',
     text: 'Проверка на добавление сообщения',
-    createdAt: new Date('2021-11-01T16:10:00'),
-    author: 'Nikola',
     isPersonal: false
 }
 
 let  m2 = {
-    id: '550',
     text: 'Проверка на добавление сообщения',
-    createdAt: new Date('2021-11-01T16:10:00'),
-    isPersonal: false
+    isPersonal: true,
+    to: 'PetrPetrov1981'
 }
 
-let  m3 = {
-    id: 550,
-    text: 'Проверка на добавление сообщения',
-    createdAt: new Date('2021-11-01T16:10:00'),
-    author: 'Nikola',
-    isPersonal: false
-}
+
 
 console.log(m1);
 console.log(chat.add(m1));
 console.log(chat.getAll());
-console.log('///////////////////////////////////////////////////////////////////////////////')
+console.log('///////////////////////////////////////////////////////////////////////////////\n');
 
 console.log(m2);
 console.log(chat.add(m2));
 console.log(chat.getAll());
-console.log('///////////////////////////////////////////////////////////////////////////////')
+console.log('///////////////////////////////////////////////////////////////////////////////\n');
 
-console.log(m3);
-console.log(chat.add(m3));
+
+
+
+
+console.log('Тестировка revoveMessage()\n')
 console.log(chat.getAll());
-console.log('///////////////////////////////////////////////////////////////////////////////')
-
-
-
-
-console.log('Тестировка revoveMessage()')
-
-console.log(chat.getAll());
-console.log(chat.getM('4'));
+console.log(chat.getMessage('4'));
 console.log(chat.remove('4'));
+console.log(chat.getAll());
 
 
 
 
-console.log('Тестировка editMessage()')
+console.log('Тестировка editMessage()\n');
 
-console.log('Незабыть придумать тесты');
+console.log(chat.edit('1',{text: 'Проверка замены текста'}));
+console.log(chat.getMessage('1'));
+
+console.log(chat.edit('1',
+    {
+        text: 'Проверка замены текста_new',
+        isPersonal: true,
+        to: 'проверка замены персональности письма'
+    }));
+console.log(chat.getMessage('1'));
 
 
+console.log(chat.edit('1',
+    {
+        text: 'Возвращаем isPerdonal = false',
+        isPersonal: false
+    }));
+console.log(chat.getMessage('1'));
 
 
 
