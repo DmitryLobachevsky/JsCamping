@@ -1,5 +1,9 @@
 import { messages } from './script.js';
 import { true_and_false_messages } from './script.js';
+import UserList from './userList.js';
+import HeaderView from './View/HeaderView.js';
+import ActiveUsersView from './View/ActiveUsersView.js';
+import MessagesView from './View/MessagesView.js';
 
 
 
@@ -8,22 +12,28 @@ class Message {
     constructor(message, user) {
         this.id = `${+new Date()}`;
         this.text = message.text;
-        this.createdAt = new Date();
+        this._createdAt = new Date();
         this.author = user;
         this.isPersonal = message.isPersonal;
         if(message.isPersonal) {
             this.to = message.to;
         }
     }
+
+
+    // set text(text) {
+    //     this.text = text;
+    // }
 }
 
 
 
 class MessageList {
 
-    constructor(messages, user = 'guest') {
+    constructor(messages = [], user) {
         this.collection = messages.slice();
-        this._user = user;
+        this.user = user;
+        
 
         this._validateObject = {
             id: (item) => item.id && typeof item.id === "string",
@@ -31,7 +41,7 @@ class MessageList {
             author: (item) => item.author && typeof item.author === "string",
             createdAt: (item) => item.createdAt && item.createdAt.__proto__ === Date.prototype
         };
-    }
+    };
 
     sort(messages){
         return messages.sort(function(a,b){
@@ -76,7 +86,7 @@ class MessageList {
             result = result.filter(item => this._filterObject[key](item, filterConfig[key]));
         });
         delete this._filterObject;
-        return result.sort().slice(skip, top);
+        return result.sort().slice(skip, skip + top); //slice глянуть 
     }
 
     add(message){
@@ -124,7 +134,7 @@ class MessageList {
         if(tempMsg.author !== this._user) {
             return false;
         }
-        if(msg.text !== undefined){
+        if(!msg.text){ // приведение типов
             tempMsg.text = msg.text;
         }
         if(msg.isPersonal !== tempMsg.isPersonal && msg.isPersonal === true){
@@ -147,78 +157,29 @@ class MessageList {
     
     
 }
+
+function setCurrentUser(user, mL) {
+    let User = new HeaderView('header-hero');
+    User.display(user);
+    mL.user = user;
+}
+
+function showActiveUsers(userList) {
+    let showUsers = new ActiveUsersView('chat-heroes');
+    showUsers.display(userList.users, userList.activeUsers);
+}
+
+function showMessages(skip, top, filterConfig, chat) {
+    let showMessages = new MessagesView('messages');
+    let messages = chat.getPage(skip, top, filterConfig);
+    console.log(messages)
+    showMessages.display(messages, chat.user);
+}
     
-let chat = new MessageList(messages, 'PetrPetrov1981');
+const chat = new MessageList(messages);
 
-console.log(chat.getAllMessages());
-console.log(chat.get('1'));
+const userList = new UserList(['Работник года крысы', 'Van`ka-vstanka123', 'Любимая староста', 'Неопознанный жираф', 'PetrPetrov1981', 'Masha', 'Kola'],['Masha', 'PetrPetrov1981', 'Kola']);
 
-console.log('Тестировка getMessages()\n \n  ');
-
-
-console.log('Выведем первые 10 сообщений\n');
-console.log(chat.getPage(0,10));
-
-console.log('Выведем 10 сообщений начиная с 11-го\n');
-console.log(chat.getPage(10,20));
-
-console.log('Выведем первые 10 старосты\n');
-console.log(chat.getPage(0,20, {author: "староста"}));
-
-let mes = new Message({
-    text: 'dasdkjnvsd',
-    isPersonal: true,
-    to: 'piu piy'
-})
-
-console.log(mes,'This is new message');
-console.log(chat._validateMessage(mes));
-console.log('Add new message', chat.add(mes));
-console.log('Victory', chat.getAllMessages());
-
-
-
-
-console.log('Тестировка revoveMessage()\n')
-console.log(chat.getAllMessages());
-console.log(chat.get('1'));
-console.log(chat.remove('1'));
-console.log(chat.getAllMessages());
-
-
-console.log(chat.get('\n','7'));
-console.log(chat.remove('7'));
-
-
-
-console.log('Тестировка editMessage()\n');
-
-console.log(chat.edit('1',{text: 'Проверка замены текста'}));
-console.log(chat.get('1'));
-
-console.log(chat.edit('1',
-    {
-        text: 'Проверка замены текста_new',
-        isPersonal: true,
-        to: 'проверка замены персональности письма'
-    }));
-console.log(chat.get('1'));
-
-
-console.log('\n', chat.get('7'));
-console.log(chat.edit('7',{text: 'Проверка замены текста 2'}));
-console.log('\n', chat.get('7'));
-
-
-
-
-
-console.log(true_and_false_messages);
-console.log(chat.addAll(true_and_false_messages));
-
-console.log('\n', 'ПРоверка метода clear()');
-console.log(chat.getAllMessages());
-chat.clear();
-console.log(chat.getAllMessages());
-
-
+setCurrentUser('Любимая староста', chat);
+showActiveUsers(userList);
+showMessages(0, 10, {}, chat);
