@@ -221,6 +221,15 @@ input {
   color: #bbb9b9;
 }
 
+.edit {
+  display: none;
+}
+
+.message:hover .edit{
+  display: block;
+  cursor: pointer;
+}
+
 .send {
   display: flex;
   align-items: center;
