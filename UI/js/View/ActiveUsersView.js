@@ -4,6 +4,10 @@ export default class ActiveUsersView {
     }
 
     display(users, activeUsers) {
+        while(this.activeUsers.firstChild){
+            this.activeUsers.removeChild(this.activeUsers.firstChild);
+        }
+
         let flag = true;
         for(let i = 0; i < activeUsers.length; i++) {
             for(let j = 0; j < users.length; j++) {

@@ -4,113 +4,107 @@ export default class MessagesView {
     }
 
     display(messagesList, user) {
+
+        while(this.collection.firstChild){
+            this.collection.removeChild(this.collection.firstChild);
+        }
+
         let list = messagesList.sort(function(a,b){
-            return a.createdAt - b.createdAt;
+            return a._createdAt - b._createdAt;
         });
 
         list.forEach(mes => {
-            if(mes.author !== user) {
-                const message = document.createElement('div');
+            let hours = [];
+                hours.push(mes._createdAt.getHours());
+                hours.push(mes._createdAt.getMinutes());
 
-                const hero = document.createElement('div');
-                const icon = document.createElement('div');
-                const letter = document.createElement('span');
+                for(let i = 0; i < 2; i++){
+                    if(hours[i] / 10 < 1) {
+                        hours[i] = '0' + `${hours[i]}`;
+                    }
+                }
 
-                const description = document.createElement('div');
-                const descrContainer = document.createElement('div');
-                const name = document.createElement('p');
-                const text = document.createElement('div');
-                const time = document.createElement('span'); 
-
-                message.classList.add('message');
-
-                hero.classList.add('chat-hero');
-            
-                icon.classList.add('hero__icon', 'chat-hero__icon', 'blue');
-
-                letter.classList.add('hero__letter');
-                letter.textContent = mes.author[0];
-
-
-                description.classList.add('message__description');
-
-                name.classList.add('message__hero-name');
-                name.textContent = mes.author;
-
-                text.classList.add('message__text');
-                text.textContent = mes.text;
-
-                time.classList.add('message__time');
-                time.textContent = `${mes._createdAt.getHours()}:${mes._createdAt.getMinutes()}`;
-
-                icon.appendChild(letter);
-                hero.appendChild(icon);
-
-                descrContainer.appendChild(name);
-                descrContainer.appendChild(text);
-                description.appendChild(descrContainer);
-                description.appendChild(time);
-
-                message.appendChild(hero);
-                message.appendChild(description);
-
-                this.collection.appendChild(message);
+            if(mes.author !== user && mes.isPersonal === false) {
+                const message = `
+                    <div class="message">
+                        <div class="chat-hero">
+                            <div class="hero__icon chat-hero__icon orange"> 
+                                <span class="hero__letter">${mes.author[0]}</span>
+                            </div>
+                        </div>
+                        <div class="message__description">
+                            <div>
+                                <p class="message__hero-name">${mes.author}</p>
+                            <div class="message__text">${mes.text}</div>
+                            </div>
+                            <span class="message__time">${hours[0]}:${hours[1]}</span>
+                        </div>
+                    </div>
+                    `;                
+                    this.collection.innerHTML += message;
+                
             }
-            else {
-                const message = document.createElement('div');
-
-                const edit = document.createElement('img');
-                const deleteMes = document.createElement('img');
-
-                const description = document.createElement('div');
-                const descrContainer = document.createElement('div');
-                const text = document.createElement('div');
-                const time = document.createElement('span'); 
-
-                const hero = document.createElement('div');
-                const icon = document.createElement('div');
-                const letter = document.createElement('span');
-
-                message.classList.add('message', 'my-message');
-
-                hero.classList.add('chat-hero');
-            
-                icon.classList.add('hero__icon', 'chat-hero__icon', 'red');
-
-                letter.classList.add('hero__letter');
-                letter.textContent = mes.author[0];
-
-                edit.classList.add('edit');
-                edit.setAttribute('src','./img/edit.png');
-                edit.setAttribute('id', `edit_${mes.id}`)
-                edit.setAttribute('alt', 'edit')
-
-                deleteMes.classList.add('edit');
-                deleteMes.setAttribute('src','./img/delete.png');
-                deleteMes.setAttribute('id', `delete_${mes.id}`);
-
-                description.classList.add('message__description');
-
-                text.classList.add('message__text');
-                text.textContent = mes.text;
-
-                time.classList.add('message__time');
-                time.textContent = `${mes._createdAt.getHours()}:${mes._createdAt.getMinutes()}`;
-
-                descrContainer.appendChild(text);
-                description.appendChild(descrContainer);
-                description.appendChild(time);
-
-                icon.appendChild(letter);
-                hero.appendChild(icon);
-
-                message.appendChild(edit);
-                message.appendChild(deleteMes);
-                message.appendChild(description);
-                message.appendChild(hero);
-
-                this.collection.appendChild(message);
+            else if(mes.author !== user && mes.isPersonal === true) {
+                
+                const message = `
+                <div class="message">
+                    <div class="chat-hero">
+                        <div class="hero__icon chat-hero__icon blue"> 
+                            <span class="hero__letter">${mes.author[0]}</span>
+                        </div>
+                    </div>
+                    <div class="message__description">
+                        <div>
+                            <p class="message__hero-name delete">${mes.author}</p>
+                            <span class="message__pesonal">To: ${mes.to}</span>
+                            <pre class="message__text">${mes.text}</pre>
+                            </div>
+                            <span class="message__time">${hours[0]}:${hours[1]}</span>
+                        </div>
+                    </div>
+                </div>
+                `;
+                this.collection.innerHTML += message;
             }
+            else if(mes.author === user && mes.isPersonal === false) {
+                const message = `
+                    <div class="message my-message">
+                        <img class="edit" src="./img/edit.png" alt="edit">
+                        <img class="edit" src="./img/delete.png" alt="delete">
+                        <div class="message__description">
+                            <p class="message__text">${mes.text}</p>
+                            <span class="message__time">${hours[0]}:${hours[1]}</span>
+                        </div>
+
+                        <div class="chat-hero">
+                            <div class="hero__icon chat-hero__icon red"> 
+                                <span class="hero__letter">${mes.author[0]}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                this.collection.innerHTML += message;
+            } else {
+                const message = `
+                <div class="message my-message">
+                    <img class="edit" src="./img/edit.png" alt="edit">
+                    <img class="edit" src="./img/delete.png" alt="delete">
+                    <div class="message__description">
+                        <span class="message__pesonal">To: ${mes.to}</span>
+                        <p class="message__text">${mes.text}</p>
+                        <span class="message__time">${hours[0]}:${hours[1]}</span>
+                    </div>
+
+                    <div class="chat-hero">
+                        <div class="hero__icon chat-hero__icon red"> 
+                            <span class="hero__letter">${mes.author[0]}</span>
+                        </div>
+                    </div>
+                </div>
+                `;
+                this.collection.innerHTML += message;
+            }
+            
         });
     }
 };

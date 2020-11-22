@@ -39,11 +39,11 @@ class MessageList {
             id: (item) => item.id && typeof item.id === "string",
             text: (item) => item.text && item.text.length <= 200,
             author: (item) => item.author && typeof item.author === "string",
-            createdAt: (item) => item.createdAt && item.createdAt.__proto__ === Date.prototype
+            _createdAt: (item) => item._createdAt && item._createdAt.__proto__ === Date.prototype
         };
     };
 
-    sort(messages){
+    sort(){
         return messages.sort(function(a,b){
             return a.createdAt - b.createdAt;
         });
@@ -86,7 +86,7 @@ class MessageList {
             result = result.filter(item => this._filterObject[key](item, filterConfig[key]));
         });
         delete this._filterObject;
-        return result.sort().slice(skip, skip + top); //slice глянуть 
+        return result.sort((a, b) => b._createdAt - a._createdAt).slice(skip, skip + top); 
     }
 
     add(message){
@@ -94,7 +94,6 @@ class MessageList {
 
             
         if(this._validateMessage(mes)){
-            console.log(mes,'Метод работает, ищи ошибку');
             this.collection.push(mes);
             return true;
         }
@@ -131,10 +130,10 @@ class MessageList {
 
     edit(id, msg){
         let tempMsg = this.collection.find(item => item.id === id);
-        if(tempMsg.author !== this._user) {
+        if(tempMsg.author !== this.user) {
             return false;
         }
-        if(!msg.text){ // приведение типов
+        if(msg.text){ // приведение типов
             tempMsg.text = msg.text;
         }
         if(msg.isPersonal !== tempMsg.isPersonal && msg.isPersonal === true){
@@ -158,28 +157,55 @@ class MessageList {
     
 }
 
-function setCurrentUser(user, mL) {
-    let User = new HeaderView('header-hero');
+const User = new HeaderView('header-hero');
+const showUsers = new ActiveUsersView('chat-heroes');
+const messagesView = new MessagesView('messages');
+const chat = new MessageList(messages);
+const userList = new UserList(['Работник года крысы', 'Van`ka-vstanka123', 'Любимая староста', 'Неопознанный жираф', 'PetrPetrov1981', 'Masha', 'Kola'],['Masha', 'PetrPetrov1981', 'Kola']);
+
+function setCurrentUser(user) {
+    chat.user = user
     User.display(user);
-    mL.user = user;
+    messagesView.display(chat.getPage(), chat.user);
 }
 
-function showActiveUsers(userList) {
-    let showUsers = new ActiveUsersView('chat-heroes');
+function showActiveUsers() {
     showUsers.display(userList.users, userList.activeUsers);
 }
 
-function showMessages(skip, top, filterConfig, chat) {
-    let showMessages = new MessagesView('messages');
-    let messages = chat.getPage(skip, top, filterConfig);
-    console.log(messages)
-    showMessages.display(messages, chat.user);
+function showMessages(skip, top, filterConfig) {
+    messagesView.display(chat.getPage(skip, top, filterConfig), chat.user);
 }
-    
-const chat = new MessageList(messages);
 
-const userList = new UserList(['Работник года крысы', 'Van`ka-vstanka123', 'Любимая староста', 'Неопознанный жираф', 'PetrPetrov1981', 'Masha', 'Kola'],['Masha', 'PetrPetrov1981', 'Kola']);
+function addMessage(msg) {
+    if(chat.add(msg)) {
+        messagesView.display(chat.getPage(), chat.user);
+    }
+}
 
-setCurrentUser('Любимая староста', chat);
+function removeMessage(id) {
+    if(chat.remove(id)){
+        messagesView.display(chat.getPage(), chat.user);
+    }
+}
+
+function editMessage(id, msg) {
+    if(chat.edit(id, msg)){
+        messagesView.display(chat.getPage(), chat.user);
+    }
+}
+
+setCurrentUser('Любимая староста');
 showActiveUsers(userList);
-showMessages(0, 10, {}, chat);
+showMessages();
+
+addMessage({
+    text:'Проверка на добавление)))',
+    isPersonal: false
+});
+
+removeMessage('18');
+removeMessage('13');
+
+chat.edit('12', {text: 'Proverka na rabotosposob'});
+console.log(chat.getPage());
