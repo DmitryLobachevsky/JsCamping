@@ -4,6 +4,8 @@ export default class HeaderView {
     }
 
     display(user) {
+        this.header.innerHTML = ""; 
+
         const description = document.createElement('div');
         const heroName = document.createElement('p');
         const exit = document.createElement('a');
@@ -18,6 +20,7 @@ export default class HeaderView {
         exit.classList.add('hero__exit');
         exit.textContent = 'Выйти';
         exit.setAttribute('href', '#');
+        exit.setAttribute('id', 'exit');
 
         heroIcon.classList.add('hero__icon');
         heroIcon.classList.add('red');
