@@ -1,0 +1,92 @@
+
+.container {
+  width: 33.75rem;
+  height: 27.5rem;
+  margin: 8rem auto;
+  background-color: #fff;
+  border-radius: 30px;
+  padding-top: 1rem;
+  -webkit-box-shadow: 0px 1px 19px -1px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 1px 19px -1px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 1px 19px -1px rgba(0, 0, 0, 0.75);
+}
+
+.head {
+    padding: 0;
+    margin: 2rem auto;
+    text-align: center;
+    color: #8bd600;
+}
+
+.join-form {
+    width: 28rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    
+}
+
+.form-string {
+    height: 3rem;
+    width: calc(100% - 10px);
+    border-radius: 10px;
+    margin-bottom: 0.8rem;
+    padding-left: 10px;
+    border: 1px solid gray;
+    outline: gray;
+    color: gray;
+}
+
+.join-form input::placeholder {
+    font-size: 1rem;
+}
+
+.button {
+    width: 100%;
+    background-color: #8bd600;
+    color: #FFF;
+    text-align: center;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    border-radius: 10px;
+    text-decoration: none;
+}
+
+.links {
+    margin-top: 1.5rem;
+}
+
+.link {
+    text-decoration: none;
+    color: gray;
+}
+
+.link-have::after {
+    content: " ";
+    margin: 0 5px;
+    width: 1px;
+    border-radius: 10px;
+    background-color: gray;
+}
+
+.buttons {
+    width: 100%;
+    display: flex;
+    margin-top: .8rem;
+    justify-content: space-between;
+}
+
+.button-join {
+    width: 48%;
+    color: #FFF;
+    text-align: center;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    border-radius: 10px;
+    text-decoration: none;
+    background-color: gray;
+    font-size: 1.2rem;
+
+}
