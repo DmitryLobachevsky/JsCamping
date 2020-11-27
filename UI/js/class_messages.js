@@ -163,6 +163,7 @@ class Controller {
         this.messagesView = new MessagesView('messages');
         this.chat = new MessageList(messages);
         this.userList = new UserList(['Работник года крысы', 'Van`ka-vstanka123', 'Любимая староста', 'Неопознанный жираф', 'PetrPetrov1981', 'Masha', 'Kola'],['Masha', 'PetrPetrov1981', 'Kola']);
+        
     }
 
     setCurrentUser(user) {
