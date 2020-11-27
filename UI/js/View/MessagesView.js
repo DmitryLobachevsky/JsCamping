@@ -4,6 +4,7 @@ export default class MessagesView {
     }
 
     display(messagesList, user) {
+        this.collection.innerHTML = '';
 
         while(this.collection.firstChild){
             this.collection.removeChild(this.collection.firstChild);
@@ -69,8 +70,8 @@ export default class MessagesView {
             else if(mes.author === user && mes.isPersonal === false) {
                 const message = `
                     <div class="message my-message">
-                        <img class="edit" src="./img/edit.png" alt="edit">
-                        <img class="edit" src="./img/delete.png" alt="delete">
+                        <img class="edit" id="edit-${mes.id}" src="./img/edit.png" alt="edit">
+                        <img class="edit" id="delete-${mes.id}" src="./img/delete.png" alt="delete">
                         <div class="message__description">
                             <p class="message__text">${mes.text}</p>
                             <span class="message__time">${hours[0]}:${hours[1]}</span>

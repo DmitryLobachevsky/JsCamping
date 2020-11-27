@@ -1,9 +1,12 @@
 import { messages } from './script.js';
-import { true_and_false_messages } from './script.js';
 import UserList from './userList.js';
 import HeaderView from './View/HeaderView.js';
 import ActiveUsersView from './View/ActiveUsersView.js';
 import MessagesView from './View/MessagesView.js';
+
+import drowRegistration from './Redrow/registration.js'
+import drowJoin from './Redrow/join.js';
+import mainPage from './Redrow/mainPage.js';
 
 
 
@@ -19,11 +22,6 @@ class Message {
             this.to = message.to;
         }
     }
-
-
-    // set text(text) {
-    //     this.text = text;
-    // }
 }
 
 
@@ -157,55 +155,93 @@ class MessageList {
     
 }
 
-const User = new HeaderView('header-hero');
-const showUsers = new ActiveUsersView('chat-heroes');
-const messagesView = new MessagesView('messages');
-const chat = new MessageList(messages);
-const userList = new UserList(['Работник года крысы', 'Van`ka-vstanka123', 'Любимая староста', 'Неопознанный жираф', 'PetrPetrov1981', 'Masha', 'Kola'],['Masha', 'PetrPetrov1981', 'Kola']);
+class Controller {
 
-function setCurrentUser(user) {
-    chat.user = user
-    User.display(user);
-    messagesView.display(chat.getPage(), chat.user);
-}
-
-function showActiveUsers() {
-    showUsers.display(userList.users, userList.activeUsers);
-}
-
-function showMessages(skip, top, filterConfig) {
-    messagesView.display(chat.getPage(skip, top, filterConfig), chat.user);
-}
-
-function addMessage(msg) {
-    if(chat.add(msg)) {
-        messagesView.display(chat.getPage(), chat.user);
+    constructor() {
+        this.User = new HeaderView('header-hero');
+        this.showUsers = new ActiveUsersView('chat-heroes');
+        this.messagesView = new MessagesView('messages');
+        this.chat = new MessageList(messages);
+        this.userList = new UserList(['Работник года крысы', 'Van`ka-vstanka123', 'Любимая староста', 'Неопознанный жираф', 'PetrPetrov1981', 'Masha', 'Kola'],['Masha', 'PetrPetrov1981', 'Kola']);
+        
     }
-}
 
-function removeMessage(id) {
-    if(chat.remove(id)){
-        messagesView.display(chat.getPage(), chat.user);
+    setCurrentUser(user) {
+        this.chat.user = user
+        this.User.display(user);
+        this.messagesView.display(this.chat.getPage(), this.chat.user);
     }
-}
 
-function editMessage(id, msg) {
-    if(chat.edit(id, msg)){
-        messagesView.display(chat.getPage(), chat.user);
+    showActiveUsers() {
+        this.showUsers.display(this.userList.users, this.userList.activeUsers);
     }
+
+    addMessage(msg) {
+        if(this.chat.add(msg)) {
+            this.messagesView.display(this.chat.getPage(), this.chat.user);
+        }
+    }
+
+    removeMessage(id) {
+        if(this.chat.remove(id)){
+            this.messagesView.display(this.chat.getPage(), this.chat.user);
+        }
+    }
+
+    editMessage(id, msg) {
+        if(this.chat.edit(id, msg)){
+            this.messagesView.display(this.chat.getPage(), this.chat.user);
+        }
+    }
+
+    drowJoin() {
+        drowJoin();
+    }
+
+    drowRegistration() {
+        drowRegistration();
+    }
+
+    registration(newUser) {
+        this.userList.activeUsers.push(newUser);
+        mainPage();
+        this.setCurrentUser(newUser);
+        // this.showActiveUsers();
+    }
+
+    
+
+
 }
 
-setCurrentUser('Любимая староста');
-showActiveUsers(userList);
-showMessages();
+mainPage();
 
-addMessage({
+window.controller = new Controller();
+
+
+controller.setCurrentUser('Любимая староста');
+controller.showActiveUsers();
+
+controller.addMessage({
     text:'Проверка на добавление)))',
     isPersonal: false
 });
 
-removeMessage('18');
-removeMessage('13');
-
-chat.edit('12', {text: 'Proverka na rabotosposob'});
-console.log(chat.getPage());
+document.addEventListener('click', event => {
+    if(event.target.id === "exit") {
+        controller.drowJoin();
+    }
+    if(event.target.id === "registration") {
+        controller.drowRegistration();
+    }
+    if(event.target.id.slice(0,6) === 'delete') {
+        controller.removeMessage(event.target.id.slice(7));
+    }
+    if(event.target.id === "input-send" && document.querySelector("#input-send").value !== "") {
+        controller.addMessage({
+            text: document.querySelector("#input-send").value,
+            isPersonal: false
+        });
+        document.querySelector("#input-send").value = '';
+    }
+})
