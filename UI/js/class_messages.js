@@ -167,7 +167,7 @@ class Controller {
     }
 
     setCurrentUser(user) {
-        this.chat.user = user
+        this.chat.user = user;
         this.User.display(user);
         this.messagesView.display(this.chat.getPage(), this.chat.user);
     }
@@ -202,11 +202,33 @@ class Controller {
         drowRegistration();
     }
 
-    registration(newUser) {
-        this.userList.activeUsers.push(newUser);
+    registration() {
+        const name = document.getElementById('name').value;
+        this.userList.activeUsers.push(name);
         mainPage();
-        this.setCurrentUser(newUser);
-        // this.showActiveUsers();
+        this.setCurrentUser(name);
+        this.showActiveUsers();
+
+    }
+
+    join() {
+        const name = document.getElementById('name').value;
+        let have = false;
+        this.userList.users.forEach(item => {
+            if(item === name) {
+                have = true;
+            }
+        });
+
+        if(have) {
+            this.userList.activeUsers.push(name);
+            mainPage();
+            this.setCurrentUser(name);
+            this.showActiveUsers();
+        } else {
+            document.getElementById('unit').style.display = 'block';
+        }
+
     }
 
     
@@ -215,7 +237,8 @@ class Controller {
 }
 
 mainPage();
-
+let flag_edit = false;
+let id;
 window.controller = new Controller();
 
 
@@ -237,11 +260,25 @@ document.addEventListener('click', event => {
     if(event.target.id.slice(0,6) === 'delete') {
         controller.removeMessage(event.target.id.slice(7));
     }
-    if(event.target.id === "input-send" && document.querySelector("#input-send").value !== "") {
+    if(event.target.id === "send" && document.querySelector("#input-send").value !== "" && flag_edit === false) {
         controller.addMessage({
             text: document.querySelector("#input-send").value,
             isPersonal: false
         });
         document.querySelector("#input-send").value = '';
     }
+    if(event.target.id === "send"  && flag_edit === true) {
+        controller.editMessage(id, {text: document.getElementById('input-send').value});
+        document.querySelector("#input-send").value = '';
+        flag_edit = false;
+    }
+    if(event.target.id.slice(0,4) === 'edit') {
+        flag_edit = true;
+        id = event.target.id.slice(5);
+        const msg = controller.chat.get(id);
+        const input = document.getElementById('input-send');
+        input.value = msg.text;
+        
+    }
 })
+

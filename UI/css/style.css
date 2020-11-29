@@ -21,7 +21,7 @@ body {
   width: 71.25rem;
   height: 100%;
   margin: 0 auto;
-  display: flex;
+  display: none;
   flex-direction: column;
   justify-content: space-between;
   margin: 0 auto;
