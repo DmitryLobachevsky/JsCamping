@@ -162,12 +162,15 @@ class Controller {
         this.showUsers = new ActiveUsersView('chat-heroes');
         this.messagesView = new MessagesView('messages');
         this.chat = new MessageList(messages);
-        this.userList = new UserList(['Работник года крысы', 'Van`ka-vstanka123', 'Любимая староста', 'Неопознанный жираф', 'PetrPetrov1981', 'Masha', 'Kola'],['Masha', 'PetrPetrov1981', 'Kola']);
-        
+        this.userList = new UserList(JSON.parse(localStorage.getItem('users') ?? '[]'), JSON.parse(localStorage.getItem('activeUsers') ?? '[]'));
+        this.chat.user = JSON.parse(localStorage.getItem('user') ?? '[]');
+        this.User.display(this.chat.user);
+        this.showActiveUsers();
     }
 
     setCurrentUser(user) {
-        this.chat.user = user
+        this.chat.user = user;
+        localStorage.setItem('user', JSON.stringify(user));
         this.User.display(user);
         this.messagesView.display(this.chat.getPage(), this.chat.user);
     }
@@ -179,18 +182,21 @@ class Controller {
     addMessage(msg) {
         if(this.chat.add(msg)) {
             this.messagesView.display(this.chat.getPage(), this.chat.user);
+            localStorage.setItem('messages', JSON.stringify(this.chat.collection));
         }
     }
 
     removeMessage(id) {
         if(this.chat.remove(id)){
             this.messagesView.display(this.chat.getPage(), this.chat.user);
+            localStorage.setItem('messages', JSON.stringify(this.chat.collection));
         }
     }
 
     editMessage(id, msg) {
         if(this.chat.edit(id, msg)){
             this.messagesView.display(this.chat.getPage(), this.chat.user);
+            localStorage.setItem('messages', JSON.stringify(this.chat.collection));
         }
     }
 
@@ -202,11 +208,36 @@ class Controller {
         drowRegistration();
     }
 
-    registration(newUser) {
-        this.userList.activeUsers.push(newUser);
+    registration() {
+        const name = document.getElementById('name').value;
+        this.userList.activeUsers.push(name);
         mainPage();
-        this.setCurrentUser(newUser);
-        // this.showActiveUsers();
+        this.setCurrentUser(name);
+        this.showActiveUsers();
+        localStorage.setItem('users', JSON.stringify(this.userList.users));
+        localStorage.setItem('activeUsers', JSON.stringify(this.userList.activeUsers));
+
+    }
+
+    join() {
+        const name = document.getElementById('name').value;
+        let have = false;
+        this.userList.users.forEach(item => {
+            if(item === name) {
+                have = true;
+            }
+        });
+
+        if(have) {
+            this.userList.activeUsers.push(name);
+            mainPage();
+            this.setCurrentUser(name);
+            this.showActiveUsers();
+        } else {
+            document.getElementById('unit').style.display = 'block';
+        }
+        localStorage.setItem('activeUsers', JSON.stringify(this.userList.activeUsers));
+
     }
 
     
@@ -215,12 +246,10 @@ class Controller {
 }
 
 mainPage();
-
+let flag_edit = false;
+let id;
 window.controller = new Controller();
 
-
-controller.setCurrentUser('Любимая староста');
-controller.showActiveUsers();
 
 controller.addMessage({
     text:'Проверка на добавление)))',
@@ -229,6 +258,14 @@ controller.addMessage({
 
 document.addEventListener('click', event => {
     if(event.target.id === "exit") {
+        let ind = controller.userList.activeUsers.findIndex(item => {
+            item === controller.chat.user;
+        })
+        controller.userList.activeUsers.splice(ind, 1);
+        controller.userList.users.push(controller.chat.user);
+
+        
+
         controller.drowJoin();
     }
     if(event.target.id === "registration") {
@@ -237,11 +274,27 @@ document.addEventListener('click', event => {
     if(event.target.id.slice(0,6) === 'delete') {
         controller.removeMessage(event.target.id.slice(7));
     }
-    if(event.target.id === "input-send" && document.querySelector("#input-send").value !== "") {
+    if(event.target.id === "send" && document.querySelector("#input-send").value !== "" && flag_edit === false) {
         controller.addMessage({
             text: document.querySelector("#input-send").value,
             isPersonal: false
         });
         document.querySelector("#input-send").value = '';
     }
+    if(event.target.id === "send"  && flag_edit === true) {
+        controller.editMessage(id, {text: document.getElementById('input-send').value});
+        document.querySelector("#input-send").value = '';
+        flag_edit = false;
+    }
+    if(event.target.id.slice(0,4) === 'edit') {
+        flag_edit = true;
+        id = event.target.id.slice(5);
+        const msg = controller.chat.get(id);
+        const input = document.getElementById('input-send');
+        input.value = msg.text;
+        
+    }
 })
+
+
+
