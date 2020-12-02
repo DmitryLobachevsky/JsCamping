@@ -31,6 +31,7 @@ class MessageList {
     constructor(messages = [], user) {
         this.collection = messages.slice();
         this.user = user;
+        this.top = 10;
         
 
         this._validateObject = {
@@ -64,7 +65,7 @@ class MessageList {
     
    
 
-    getPage(skip = 0, top = 10, filterConfig = {}) {
+    getPage(skip = 0, filterConfig = {}) {
         this._filterObject = {
             author: (item, author) => author && item.author.toLowerCase().includes(author),
             text: (item, text) => text && item.text.toLowerCase().includes(text),
@@ -84,7 +85,7 @@ class MessageList {
             result = result.filter(item => this._filterObject[key](item, filterConfig[key]));
         });
         delete this._filterObject;
-        return result.sort((a, b) => b._createdAt - a._createdAt).slice(skip, skip + top); 
+        return result.sort((a, b) => b._createdAt - a._createdAt).slice(skip, skip + this.top); 
     }
 
     add(message){
@@ -296,5 +297,10 @@ document.addEventListener('click', event => {
     }
 })
 
-
+controller.messagesView.collection.addEventListener('scroll', event => {
+    if(controller.messagesView.collection.scrollTop === 0) {
+        controller.chat.top += 10;
+        controller.messagesView.display(controller.chat.getPage(), controller.chat.user);
+    }
+});
 

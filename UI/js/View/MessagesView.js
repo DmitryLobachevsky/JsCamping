@@ -1,6 +1,7 @@
 export default class MessagesView {
     constructor(containerId) {
         this.collection = document.querySelector('#' + containerId);
+        
     }
 
     display(messagesList, user) {
@@ -107,5 +108,7 @@ export default class MessagesView {
             }
             
         });
+        this.collection.scrollBy(0, this.collection.clientHeight);
+
     }
 };
