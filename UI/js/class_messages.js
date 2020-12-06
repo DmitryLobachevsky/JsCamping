@@ -8,7 +8,7 @@ import drowRegistration from './Redrow/registration.js'
 import drowJoin from './Redrow/join.js';
 import mainPage from './Redrow/mainPage.js';
 
-
+import ChatApiService from './ChatApiService.js';
 
 
 class Message {
@@ -149,42 +149,41 @@ class MessageList {
             return true;
         }
         return false;
-
-    }
-
-    
-    
+    }    
 }
 
 class Controller {
 
     constructor() {
+        this.chatApi = new ChatApiService('https://jslabdb.datamola.com/');
         this.User = new HeaderView('header-hero');
         this.showUsers = new ActiveUsersView('chat-heroes');
         this.messagesView = new MessagesView('messages');
-        this.chat = new MessageList(messages);
-        this.userList = new UserList(JSON.parse(localStorage.getItem('users') ?? '[]'), JSON.parse(localStorage.getItem('activeUsers') ?? '[]'));
-        this.chat.user = JSON.parse(localStorage.getItem('user') ?? '[]');
-        this.User.display(this.chat.user);
+        this.user = localStorage.getItem('user') ?? '[]';
+        this.User.display(this.user);
         this.showActiveUsers();
+        this.showMessages();
     }
 
-    setCurrentUser(user) {
-        this.chat.user = user;
-        localStorage.setItem('user', JSON.stringify(user));
-        this.User.display(user);
-        this.messagesView.display(this.chat.getPage(), this.chat.user);
+    setCurrentUser() {
+        mainPage();
+        this.user = localStorage.getItem('user');
+        this.User = new HeaderView('header-hero');
+        this.User.display(this.user);
+        
     }
 
     showActiveUsers() {
-        this.showUsers.display(this.userList.users, this.userList.activeUsers);
+        this.chatApi.getUsers(this.showUsers);
     }
 
-    addMessage(msg) {
-        if(this.chat.add(msg)) {
-            this.messagesView.display(this.chat.getPage(), this.chat.user);
-            localStorage.setItem('messages', JSON.stringify(this.chat.collection));
-        }
+    showMessages() {
+        this.chatApi.getMessages(this.messagesView, this.user); 
+    }
+
+    addMessage() {
+        this.chatApi.addMessage();
+        setTimeout(this.chatApi.getMessages(this.messagesView, this.user), 2000)
     }
 
     removeMessage(id) {
@@ -221,24 +220,11 @@ class Controller {
     }
 
     join() {
-        const name = document.getElementById('name').value;
-        let have = false;
-        this.userList.users.forEach(item => {
-            if(item === name) {
-                have = true;
-            }
-        });
-
-        if(have) {
-            this.userList.activeUsers.push(name);
-            mainPage();
-            this.setCurrentUser(name);
-            this.showActiveUsers();
-        } else {
-            document.getElementById('unit').style.display = 'block';
-        }
-        localStorage.setItem('activeUsers', JSON.stringify(this.userList.activeUsers));
-
+        this.chatApi.login();
+        setTimeout(this.setCurrentUser, 1000);
+        setTimeout(this.showMessages(), 1100);
+        
+        
     }
 
     
@@ -252,21 +238,9 @@ let id;
 window.controller = new Controller();
 
 
-controller.addMessage({
-    text:'Проверка на добавление)))',
-    isPersonal: false
-});
 
 document.addEventListener('click', event => {
     if(event.target.id === "exit") {
-        let ind = controller.userList.activeUsers.findIndex(item => {
-            item === controller.chat.user;
-        })
-        controller.userList.activeUsers.splice(ind, 1);
-        controller.userList.users.push(controller.chat.user);
-
-        
-
         controller.drowJoin();
     }
     if(event.target.id === "registration") {
@@ -276,10 +250,7 @@ document.addEventListener('click', event => {
         controller.removeMessage(event.target.id.slice(7));
     }
     if(event.target.id === "send" && document.querySelector("#input-send").value !== "" && flag_edit === false) {
-        controller.addMessage({
-            text: document.querySelector("#input-send").value,
-            isPersonal: false
-        });
+        controller.addMessage();
         document.querySelector("#input-send").value = '';
     }
     if(event.target.id === "send"  && flag_edit === true) {
@@ -297,10 +268,10 @@ document.addEventListener('click', event => {
     }
 })
 
-controller.messagesView.collection.addEventListener('scroll', event => {
-    if(controller.messagesView.collection.scrollTop === 0) {
-        controller.chat.top += 10;
-        controller.messagesView.display(controller.chat.getPage(), controller.chat.user);
-    }
-});
+// controller.messagesView.collection.addEventListener('scroll', event => {
+//     if(controller.messagesView.collection.scrollTop === 0) {
+//         top += 10;
+//         controller.showMessages();
+//     }
+// });
 

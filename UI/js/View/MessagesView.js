@@ -4,7 +4,7 @@ export default class MessagesView {
         
     }
 
-    display(messagesList, user) {
+    display(messagesList, user ) {
         this.collection.innerHTML = '';
 
         while(this.collection.firstChild){
@@ -12,13 +12,14 @@ export default class MessagesView {
         }
 
         let list = messagesList.sort(function(a,b){
-            return a._createdAt - b._createdAt;
+            return a.createdAt - b.createdAt;
         });
 
         list.forEach(mes => {
+            let time = new Date(mes.createdAt);
             let hours = [];
-                hours.push(mes._createdAt.getHours());
-                hours.push(mes._createdAt.getMinutes());
+                hours.push(time.getHours());
+                hours.push(time.getMinutes());
 
                 for(let i = 0; i < 2; i++){
                     if(hours[i] / 10 < 1) {

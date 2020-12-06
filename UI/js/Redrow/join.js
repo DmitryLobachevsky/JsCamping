@@ -10,7 +10,7 @@ export default function drowJoin() {
         <h1 class="head">Добро пожаловать</h1>
         <form action="" class="join-form">
             <input type="text" id="name" class="login form-string" placeholder="Логин" required >
-            <input type="password" class="password form-string" placeholder="Пароль" >
+            <input type="password" id="pass" class="password form-string" placeholder="Пароль" required>
             <a href="#" class="button" onclick="controller.join()" >Войти</a>
             <div class="buttons">
                 <a href="#" class="button-join">Войти как гость</a>
