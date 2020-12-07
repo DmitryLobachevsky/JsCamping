@@ -6,15 +6,27 @@ export default class MessagesView {
 
     display(messagesList, user ) {
         this.collection.innerHTML = '';
+        let list;
 
         while(this.collection.firstChild){
             this.collection.removeChild(this.collection.firstChild);
         }
-
-        let list = messagesList.sort(function(a,b){
+        if(messagesList[0] === '[') {
+            
+           list = JSON.parse(messagesList).sort(function(a,b){
             return a.createdAt - b.createdAt;
         });
+        } else {
+            list = messagesList.sort(function(a,b){
+                return a.createdAt - b.createdAt;
+            });;
+        }
 
+        
+            
+        
+        
+        
         list.forEach(mes => {
             let time = new Date(mes.createdAt);
             let hours = [];
@@ -75,7 +87,7 @@ export default class MessagesView {
                         <img class="edit" id="edit-${mes.id}" src="./img/edit.png" alt="edit">
                         <img class="edit" id="delete-${mes.id}" src="./img/delete.png" alt="delete">
                         <div class="message__description">
-                            <p class="message__text">${mes.text}</p>
+                            <p class="message__text" id="${mes.id}">${mes.text}</p>
                             <span class="message__time">${hours[0]}:${hours[1]}</span>
                         </div>
 
@@ -94,7 +106,7 @@ export default class MessagesView {
                     <img class="edit" src="./img/delete.png" alt="delete">
                     <div class="message__description">
                         <span class="message__pesonal">To: ${mes.to}</span>
-                        <p class="message__text">${mes.text}</p>
+                        <p id="${mes.id}" class="message__text">${mes.text}</p>
                         <span class="message__time">${hours[0]}:${hours[1]}</span>
                     </div>
 
