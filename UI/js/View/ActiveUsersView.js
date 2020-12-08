@@ -4,6 +4,7 @@ export default class ActiveUsersView {
     }
 
     display(users, activeUsers) {
+        let id = 0;
         while(this.activeUsers.firstChild){
             this.activeUsers.removeChild(this.activeUsers.firstChild);
         }
@@ -28,6 +29,8 @@ export default class ActiveUsersView {
                 const name = document.createElement('div');
     
                 hero.classList.add('chat-hero');
+                hero.setAttribute('id', id);
+                id++;
     
                 icon.classList.add('chat-hero__icon');
                 icon.classList.add('hero__icon');

@@ -1,249 +1,219 @@
-import { messages } from './script.js';
-import UserList from './userList.js';
-import HeaderView from './View/HeaderView.js';
-import ActiveUsersView from './View/ActiveUsersView.js';
-import MessagesView from './View/MessagesView.js';
+import { messages } from "./script.js";
+import UserList from "./userList.js";
+import HeaderView from "./View/HeaderView.js";
+import ActiveUsersView from "./View/ActiveUsersView.js";
+import MessagesView from "./View/MessagesView.js";
 
-import drowRegistration from './Redrow/registration.js'
-import drowJoin from './Redrow/join.js';
-import mainPage from './Redrow/mainPage.js';
+import drowRegistration from "./Redrow/registration.js";
+import drowJoin from "./Redrow/join.js";
+import mainPage from "./Redrow/mainPage.js";
 
+import ChatApiService from "./ChatApiService.js";
 
+// class Message {
+//   constructor(message, user) {
+//     this.id = `${+new Date()}`;
+//     this.text = message.text;
+//     this._createdAt = new Date();
+//     this.author = user;
+//     this.isPersonal = message.isPersonal;
+//     if (message.isPersonal) {
+//       this.to = message.to;
+//     }
+//   }
+// }
 
+// class MessageList {
+//   constructor(messages = [], user) {
+//     this.collection = messages.slice();
+//     this.user = user;
+//     this.top = 10;
 
-class Message {
-    constructor(message, user) {
-        this.id = `${+new Date()}`;
-        this.text = message.text;
-        this._createdAt = new Date();
-        this.author = user;
-        this.isPersonal = message.isPersonal;
-        if(message.isPersonal) {
-            this.to = message.to;
-        }
-    }
-}
+//     this._validateObject = {
+//       id: (item) => item.id && typeof item.id === "string",
+//       text: (item) => item.text && item.text.length <= 200,
+//       author: (item) => item.author && typeof item.author === "string",
+//       _createdAt: (item) =>
+//         item._createdAt && item._createdAt.__proto__ === Date.prototype,
+//     };
+//   }
 
+//   sort() {
+//     return messages.sort(function (a, b) {
+//       return a.createdAt - b.createdAt;
+//     });
+//   }
 
+//   _validateMessage(message) {
+//     return Object.keys(this._validateObject).every((key) =>
+//       this._validateObject[key](message)
+//     );
+//   }
 
-class MessageList {
+//   getAllMessages() {
+//     return this.collection;
+//   }
 
-    constructor(messages = [], user) {
-        this.collection = messages.slice();
-        this.user = user;
-        this.top = 10;
-        
+//   get(id) {
+//     return this.collection.find((item) => item.id === id);
+//   }
 
-        this._validateObject = {
-            id: (item) => item.id && typeof item.id === "string",
-            text: (item) => item.text && item.text.length <= 200,
-            author: (item) => item.author && typeof item.author === "string",
-            _createdAt: (item) => item._createdAt && item._createdAt.__proto__ === Date.prototype
-        };
-    };
+//   getPage(skip = 0, filterConfig = {}) {
+//     this._filterObject = {
+//       author: (item, author) =>
+//         author && item.author.toLowerCase().includes(author),
+//       text: (item, text) => text && item.text.toLowerCase().includes(text),
+//       dateTo: (item, dateTo) => dateTo && item.createdAt < dateTo,
+//       dateFrom: (item, dateFrom) => dateFrom && item.createdAt < dateFrom,
+//     };
 
-    sort(){
-        return messages.sort(function(a,b){
-            return a.createdAt - b.createdAt;
-        });
-    }
+//     let result = [];
 
-    _validateMessage(message){
-        return Object.keys(this._validateObject).every(key => this._validateObject[key](message));
-    }
+//     this.collection.forEach((msg) => {
+//       if (
+//         msg.isPersonal === false ||
+//         msg.author === this._user ||
+//         (msg.isPersonal === true && msg.to === this.user)
+//       ) {
+//         result.push(msg);
+//       }
+//     });
 
+//     Object.keys(filterConfig).forEach((key) => {
+//       result = result.filter((item) =>
+//         this._filterObject[key](item, filterConfig[key])
+//       );
+//     });
+//     delete this._filterObject;
+//     return result
+//       .sort((a, b) => b._createdAt - a._createdAt)
+//       .slice(skip, skip + this.top);
+//   }
 
+//   add(message) {
+//     let mes = new Message(message, this.user);
 
-    getAllMessages() {
-        return this.collection;
-    }
+//     if (this._validateMessage(mes)) {
+//       this.collection.push(mes);
+//       return true;
+//     }
+//     return false;
+//   }
 
-    
-    get(id) {
-        return this.collection.find(item => item.id === id);
-    }
-    
-   
+//   addAll(msgs) {
+//     let failed_messages = [];
+//     msgs.map((item) => {
+//       let msg = new Message(item, this._user);
+//       if (this._validateMessage(msg)) {
+//         this.collection.push(msg);
+//       } else {
+//         failed_messages.push(msg);
+//       }
+//     });
+//     return failed_messages;
+//   }
 
-    getPage(skip = 0, filterConfig = {}) {
-        this._filterObject = {
-            author: (item, author) => author && item.author.toLowerCase().includes(author),
-            text: (item, text) => text && item.text.toLowerCase().includes(text),
-            dateTo: (item, dateTo) => dateTo && item.createdAt < dateTo,
-            dateFrom: (item, dateFrom) => dateFrom && item.createdAt < dateFrom
-        };
+//   remove(id) {
+//     let index = this.collection.findIndex((item) => item.id === id);
+//     if (this.collection[index].author !== this.user) {
+//       return false;
+//     }
+//     this.collection.splice(index, 1);
+//     return true;
+//   }
 
-        let result = [];
+//   clear() {
+//     this.collection = [];
+//   }
 
-        this.collection.forEach(msg => {
-            if(msg.isPersonal === false || msg.author === this._user || (msg.isPersonal === true && msg.to === this.user)) {
-                result.push(msg);
-            }
-        })
-        
-        Object.keys(filterConfig).forEach(key => {
-            result = result.filter(item => this._filterObject[key](item, filterConfig[key]));
-        });
-        delete this._filterObject;
-        return result.sort((a, b) => b._createdAt - a._createdAt).slice(skip, skip + this.top); 
-    }
+//   edit(id, msg) {
+//     let tempMsg = this.collection.find((item) => item.id === id);
+//     if (tempMsg.author !== this.user) {
+//       return false;
+//     }
+//     if (msg.text) {
+//       // приведение типов
+//       tempMsg.text = msg.text;
+//     }
+//     if (msg.isPersonal !== tempMsg.isPersonal && msg.isPersonal === true) {
+//       tempMsg.isPersonal = msg.isPersonal;
+//       tempMsg.to = msg.to;
+//       console.log("Udalos");
+//     } else if (
+//       msg.isPersonal !== tempMsg.isPersonal &&
+//       msg.isPersonal === false
+//     ) {
+//       tempMsg.isPersonal = msg.isPersonal;
+//       delete tempMsg.to;
+//     }
 
-    add(message){
-        let mes = new Message(message, this.user);
-
-            
-        if(this._validateMessage(mes)){
-            this.collection.push(mes);
-            return true;
-        }
-        return false;
-    }
-
-    addAll(msgs) {
-        let failed_messages = [];
-        msgs.map(item => {
-            let msg = new Message(item, this._user);
-            if(this._validateMessage(msg)) {
-                this.collection.push(msg);
-            }
-            else {
-                failed_messages.push(msg);
-            }
-        })
-        return failed_messages;
-    }
-
-    remove(id){
-        let index = this.collection.findIndex(item => item.id === id);
-        if(this.collection[index].author !== this.user) {
-            return false;
-        }
-        this.collection.splice(index, 1);
-        return true;
-    }
-
-    clear() {
-        this.collection = [];
-    }
-    
-
-    edit(id, msg){
-        let tempMsg = this.collection.find(item => item.id === id);
-        if(tempMsg.author !== this.user) {
-            return false;
-        }
-        if(msg.text){ // приведение типов
-            tempMsg.text = msg.text;
-        }
-        if(msg.isPersonal !== tempMsg.isPersonal && msg.isPersonal === true){
-            tempMsg.isPersonal = msg.isPersonal;
-            tempMsg.to = msg.to;
-            console.log('Udalos');
-        } else 
-        if(msg.isPersonal !== tempMsg.isPersonal && msg.isPersonal === false){
-            tempMsg.isPersonal = msg.isPersonal;
-            delete tempMsg.to; 
-        }
-        
-        if(this._validateMessage(tempMsg)){
-            return true;
-        }
-        return false;
-
-    }
-
-    
-    
-}
+//     if (this._validateMessage(tempMsg)) {
+//       return true;
+//     }
+//     return false;
+//   }
+// }
 
 class Controller {
+  constructor() {
+    this.chatApi = new ChatApiService("https://jslabdb.datamola.com/");
+    this.User = new HeaderView("header-hero");
+    this.showUsers = new ActiveUsersView("chat-heroes");
+    this.messagesView = new MessagesView("messages");
+    this.user = localStorage.getItem("user") ?? "[]";
+    this.User.display(this.user);
+    this.showActiveUsers();
+    this.showMessages();
+    localStorage.setItem('isPersonal', false);
+  }
 
-    constructor() {
-        this.User = new HeaderView('header-hero');
-        this.showUsers = new ActiveUsersView('chat-heroes');
-        this.messagesView = new MessagesView('messages');
-        this.chat = new MessageList(messages);
-        this.userList = new UserList(JSON.parse(localStorage.getItem('users') ?? '[]'), JSON.parse(localStorage.getItem('activeUsers') ?? '[]'));
-        this.chat.user = JSON.parse(localStorage.getItem('user') ?? '[]');
-        this.User.display(this.chat.user);
-        this.showActiveUsers();
-    }
+  setCurrentUser() {
+    mainPage();
+    this.user = localStorage.getItem("user");
+    this.User = new HeaderView("header-hero");
+    this.User.display(this.user);
+    this.showActiveUsers();
+    this.showMessages();
+  }
 
-    setCurrentUser(user) {
-        this.chat.user = user;
-        localStorage.setItem('user', JSON.stringify(user));
-        this.User.display(user);
-        this.messagesView.display(this.chat.getPage(), this.chat.user);
-    }
+  showActiveUsers() {
+    this.chatApi.getUsers(this.showUsers);
+  }
 
-    showActiveUsers() {
-        this.showUsers.display(this.userList.users, this.userList.activeUsers);
-    }
+  showMessages() {
+    this.chatApi.getMessages(this.messagesView, this.user);
+  }
 
-    addMessage(msg) {
-        if(this.chat.add(msg)) {
-            this.messagesView.display(this.chat.getPage(), this.chat.user);
-            localStorage.setItem('messages', JSON.stringify(this.chat.collection));
-        }
-    }
+  addMessage() {
+    this.chatApi.addMessage().then(() => {
+        this.showMessages();
+    });
+  }
 
-    removeMessage(id) {
-        if(this.chat.remove(id)){
-            this.messagesView.display(this.chat.getPage(), this.chat.user);
-            localStorage.setItem('messages', JSON.stringify(this.chat.collection));
-        }
-    }
+  removeMessage(id) {
+    this.chatApi.deleleMessage(id).then(() => this.showMessages());
+  }
 
-    editMessage(id, msg) {
-        if(this.chat.edit(id, msg)){
-            this.messagesView.display(this.chat.getPage(), this.chat.user);
-            localStorage.setItem('messages', JSON.stringify(this.chat.collection));
-        }
-    }
+  editMessage(id, msg) {
+    this.chatApi.editMessage(id, msg).then(() => this.showMessages());
+  }
 
-    drowJoin() {
-        drowJoin();
-    }
+  drowJoin() {
+    drowJoin();
+  }
 
-    drowRegistration() {
-        drowRegistration();
-    }
+  drowRegistration() {
+    drowRegistration();
+  }
 
-    registration() {
-        const name = document.getElementById('name').value;
-        this.userList.activeUsers.push(name);
-        mainPage();
-        this.setCurrentUser(name);
-        this.showActiveUsers();
-        localStorage.setItem('users', JSON.stringify(this.userList.users));
-        localStorage.setItem('activeUsers', JSON.stringify(this.userList.activeUsers));
+  registration() {
+    this.chatApi.register();
+    this.drowJoin();
+  }
 
-    }
-
-    join() {
-        const name = document.getElementById('name').value;
-        let have = false;
-        this.userList.users.forEach(item => {
-            if(item === name) {
-                have = true;
-            }
-        });
-
-        if(have) {
-            this.userList.activeUsers.push(name);
-            mainPage();
-            this.setCurrentUser(name);
-            this.showActiveUsers();
-        } else {
-            document.getElementById('unit').style.display = 'block';
-        }
-        localStorage.setItem('activeUsers', JSON.stringify(this.userList.activeUsers));
-
-    }
-
-    
-
-
+  join() {
+    this.chatApi.login().then(() => this.setCurrentUser());
+  }
 }
 
 mainPage();
@@ -251,56 +221,65 @@ let flag_edit = false;
 let id;
 window.controller = new Controller();
 
-
-controller.addMessage({
-    text:'Проверка на добавление)))',
-    isPersonal: false
+document.addEventListener("click", (event) => {
+    //console.log(event.target.childNodes[1].textContent);
+  if (event.target.id === "exit") {
+    controller.chatApi.logout();
+    controller.drowJoin();
+  }
+  if (event.target.id === "registration") {
+    controller.drowRegistration();
+  }
+  if (event.target.id.slice(0, 6) === "delete") {
+    controller.removeMessage(event.target.id.slice(7));
+  }
+  if (
+    event.target.id === "send" &&
+    document.querySelector("#input-send").value !== "" &&
+    flag_edit === false
+  ) {
+    controller.addMessage();
+    document.querySelector("#input-send").value = "";
+  }
+  if (event.target.id === "send" && flag_edit === true) {
+    controller.editMessage(id, document.getElementById("input-send").value);
+    document.querySelector("#input-send").value = "";
+    flag_edit = false;
+  }
+  if (event.target.id.slice(0, 4) === "edit") {
+    flag_edit = true;
+    id = event.target.id.slice(5);
+    const msg = document.getElementById(id).textContent;
+    const input = document.getElementById("input-send");
+    input.value = msg;
+  }
 });
 
-document.addEventListener('click', event => {
-    if(event.target.id === "exit") {
-        let ind = controller.userList.activeUsers.findIndex(item => {
-            item === controller.chat.user;
-        })
-        controller.userList.activeUsers.splice(ind, 1);
-        controller.userList.users.push(controller.chat.user);
+// controller.messagesView.collection.addEventListener('scroll', event => {
+//     if(controller.messagesView.collection.scrollTop === 0) {
+//         top += 10;
+//         controller.showMessages();
+//     }
+// });
 
-        
+controller.showUsers.activeUsers.addEventListener("click", (event) => {
+    const user = event.target.childNodes[1].textContent;
+    localStorage.setItem('to', user);
 
-        controller.drowJoin();
-    }
-    if(event.target.id === "registration") {
-        controller.drowRegistration();
-    }
-    if(event.target.id.slice(0,6) === 'delete') {
-        controller.removeMessage(event.target.id.slice(7));
-    }
-    if(event.target.id === "send" && document.querySelector("#input-send").value !== "" && flag_edit === false) {
-        controller.addMessage({
-            text: document.querySelector("#input-send").value,
-            isPersonal: false
-        });
-        document.querySelector("#input-send").value = '';
-    }
-    if(event.target.id === "send"  && flag_edit === true) {
-        controller.editMessage(id, {text: document.getElementById('input-send').value});
-        document.querySelector("#input-send").value = '';
-        flag_edit = false;
-    }
-    if(event.target.id.slice(0,4) === 'edit') {
-        flag_edit = true;
-        id = event.target.id.slice(5);
-        const msg = controller.chat.get(id);
-        const input = document.getElementById('input-send');
-        input.value = msg.text;
-        
-    }
-})
+    if(event.target.id === localStorage.getItem('last')) {
+        document.getElementById(`${localStorage.getItem('last')}`).style.backgroundColor = "#FFF";
+        localStorage.setItem('isPersonal', false);
+    } else {
+        if(localStorage.getItem('last')) {
+            document.getElementById(`${localStorage.getItem('last')}`).style.backgroundColor = "#FFF";
+        } 
+        event.target.style.backgroundColor = "green";
+        localStorage.setItem('last', event.target.id);
+        localStorage.setItem('isPersonal', true);
 
-controller.messagesView.collection.addEventListener('scroll', event => {
-    if(controller.messagesView.collection.scrollTop === 0) {
-        controller.chat.top += 10;
-        controller.messagesView.display(controller.chat.getPage(), controller.chat.user);
     }
+
+    
+    
+
 });
-
