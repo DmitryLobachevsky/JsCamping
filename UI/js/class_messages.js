@@ -7,152 +7,10 @@ import MessagesView from "./View/MessagesView.js";
 import drowRegistration from "./Redrow/registration.js";
 import drowJoin from "./Redrow/join.js";
 import mainPage from "./Redrow/mainPage.js";
+import drowError from './Redrow/Error.js';
 
 import ChatApiService from "./ChatApiService.js";
 
-// class Message {
-//   constructor(message, user) {
-//     this.id = `${+new Date()}`;
-//     this.text = message.text;
-//     this._createdAt = new Date();
-//     this.author = user;
-//     this.isPersonal = message.isPersonal;
-//     if (message.isPersonal) {
-//       this.to = message.to;
-//     }
-//   }
-// }
-
-// class MessageList {
-//   constructor(messages = [], user) {
-//     this.collection = messages.slice();
-//     this.user = user;
-//     this.top = 10;
-
-//     this._validateObject = {
-//       id: (item) => item.id && typeof item.id === "string",
-//       text: (item) => item.text && item.text.length <= 200,
-//       author: (item) => item.author && typeof item.author === "string",
-//       _createdAt: (item) =>
-//         item._createdAt && item._createdAt.__proto__ === Date.prototype,
-//     };
-//   }
-
-//   sort() {
-//     return messages.sort(function (a, b) {
-//       return a.createdAt - b.createdAt;
-//     });
-//   }
-
-//   _validateMessage(message) {
-//     return Object.keys(this._validateObject).every((key) =>
-//       this._validateObject[key](message)
-//     );
-//   }
-
-//   getAllMessages() {
-//     return this.collection;
-//   }
-
-//   get(id) {
-//     return this.collection.find((item) => item.id === id);
-//   }
-
-//   getPage(skip = 0, filterConfig = {}) {
-//     this._filterObject = {
-//       author: (item, author) =>
-//         author && item.author.toLowerCase().includes(author),
-//       text: (item, text) => text && item.text.toLowerCase().includes(text),
-//       dateTo: (item, dateTo) => dateTo && item.createdAt < dateTo,
-//       dateFrom: (item, dateFrom) => dateFrom && item.createdAt < dateFrom,
-//     };
-
-//     let result = [];
-
-//     this.collection.forEach((msg) => {
-//       if (
-//         msg.isPersonal === false ||
-//         msg.author === this._user ||
-//         (msg.isPersonal === true && msg.to === this.user)
-//       ) {
-//         result.push(msg);
-//       }
-//     });
-
-//     Object.keys(filterConfig).forEach((key) => {
-//       result = result.filter((item) =>
-//         this._filterObject[key](item, filterConfig[key])
-//       );
-//     });
-//     delete this._filterObject;
-//     return result
-//       .sort((a, b) => b._createdAt - a._createdAt)
-//       .slice(skip, skip + this.top);
-//   }
-
-//   add(message) {
-//     let mes = new Message(message, this.user);
-
-//     if (this._validateMessage(mes)) {
-//       this.collection.push(mes);
-//       return true;
-//     }
-//     return false;
-//   }
-
-//   addAll(msgs) {
-//     let failed_messages = [];
-//     msgs.map((item) => {
-//       let msg = new Message(item, this._user);
-//       if (this._validateMessage(msg)) {
-//         this.collection.push(msg);
-//       } else {
-//         failed_messages.push(msg);
-//       }
-//     });
-//     return failed_messages;
-//   }
-
-//   remove(id) {
-//     let index = this.collection.findIndex((item) => item.id === id);
-//     if (this.collection[index].author !== this.user) {
-//       return false;
-//     }
-//     this.collection.splice(index, 1);
-//     return true;
-//   }
-
-//   clear() {
-//     this.collection = [];
-//   }
-
-//   edit(id, msg) {
-//     let tempMsg = this.collection.find((item) => item.id === id);
-//     if (tempMsg.author !== this.user) {
-//       return false;
-//     }
-//     if (msg.text) {
-//       // приведение типов
-//       tempMsg.text = msg.text;
-//     }
-//     if (msg.isPersonal !== tempMsg.isPersonal && msg.isPersonal === true) {
-//       tempMsg.isPersonal = msg.isPersonal;
-//       tempMsg.to = msg.to;
-//       console.log("Udalos");
-//     } else if (
-//       msg.isPersonal !== tempMsg.isPersonal &&
-//       msg.isPersonal === false
-//     ) {
-//       tempMsg.isPersonal = msg.isPersonal;
-//       delete tempMsg.to;
-//     }
-
-//     if (this._validateMessage(tempMsg)) {
-//       return true;
-//     }
-//     return false;
-//   }
-// }
 
 class Controller {
   constructor() {
@@ -206,6 +64,10 @@ class Controller {
     drowRegistration();
   }
 
+  drowError() {
+    drowError();
+  }
+
   registration() {
     this.chatApi.register();
     this.drowJoin();
@@ -213,6 +75,14 @@ class Controller {
 
   join() {
     this.chatApi.login().then(() => this.setCurrentUser());
+    const send = document.getElementById('send-cont');
+    send.style.display = 'flex';
+  }
+
+  guest() {
+    localStorage.setItem('user', ' ');
+    this.join();
+
   }
 }
 
@@ -222,10 +92,14 @@ let id;
 window.controller = new Controller();
 
 document.addEventListener("click", (event) => {
-    //console.log(event.target.childNodes[1].textContent);
   if (event.target.id === "exit") {
     controller.chatApi.logout();
     controller.drowJoin();
+  }
+  if(event.target.id === "guest") {
+    controller.guest();
+    const send = document.getElementById('send-cont');
+    send.style.display = 'none';
   }
   if (event.target.id === "registration") {
     controller.drowRegistration();

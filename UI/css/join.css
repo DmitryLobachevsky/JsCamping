@@ -100,3 +100,16 @@
     font-size: 24px;
     background-color: #fff;
 }
+
+.error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+.error {
+    padding: 40px;
+    margin-top: 20%;
+    background-color: #8bd600;
+}

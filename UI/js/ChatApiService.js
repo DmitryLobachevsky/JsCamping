@@ -1,3 +1,5 @@
+import drowError from "./Redrow/Error.js";
+
 export default class ChatApiService {
   constructor(url) {
     this.url = url;
@@ -94,7 +96,10 @@ export default class ChatApiService {
         localStorage.setItem("user", name);
         localStorage.setItem("token", result.token);
       })
-      .catch((error) => console.log("error", error));
+      .catch((error) => {
+        console.log("error", error);
+        drowError();
+        });
   }
 
   logout() {
